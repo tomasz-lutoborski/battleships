@@ -1,5 +1,4 @@
-import { generateBoard, decodeBoard, encodeBoard, getNumberOfShips } from './utils';
-import type { Board } from '../types';
+import { Board } from './board';
 
 export class Game {
 	index: number;
@@ -15,28 +14,28 @@ export class Game {
 			const [index, playersBoard, oponentsBoard, playersTurn] = serialized.split('-');
 
 			this.index = +index;
-			this.playersBoard = decodeBoard(playersBoard.split(','));
-			this.oponentsBoard = decodeBoard(oponentsBoard.split(','));
+			this.playersBoard = new Board(playersBoard.split(','));
+			this.oponentsBoard = new Board(oponentsBoard.split(','));
 			this.playersTurn = playersTurn === 'true';
 		} else {
 			this.index = Math.floor(Math.random() * Date.now());
-			this.playersBoard = generateBoard();
-			this.oponentsBoard = generateBoard();
+			this.playersBoard = new Board();
+			this.oponentsBoard = new Board();
 			this.playersTurn = Math.random() < 0.5;
 		}
 	}
 
 	toString() {
-		return `${this.index}-${encodeBoard(this.playersBoard)}-${encodeBoard(this.oponentsBoard)}-${
+		return `${this.index}-${this.playersBoard.encode()}-${this.oponentsBoard.encode()}-${
 			this.playersTurn
 		}`;
 	}
 
 	getNumberOfPlayersShips() {
-		return getNumberOfShips(this.playersBoard);
+		return this.playersBoard.getNumberOfShips();
 	}
 
 	getNumberOfOponentsShips() {
-		return getNumberOfShips(this.oponentsBoard);
+		return this.oponentsBoard.getNumberOfShips();
 	}
 }
