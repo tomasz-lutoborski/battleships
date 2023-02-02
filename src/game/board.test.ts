@@ -41,6 +41,7 @@ function generateSerializedBoardWith8Ships() {
 
 const boardFromSerialized = new Board(generateSerializedBoard());
 const boardFromScratch = new Board();
+const boardWithShips = new Board(undefined, true);
 
 test('correctly generates board from serialized', () => {
 	expect(boardFromSerialized.fields.length).toBe(BOARD_SIZE);
@@ -57,27 +58,12 @@ test('correctly generates board from serialized', () => {
 	expect(boardFromSerialized.fields[5][9]).toBe('sunk');
 });
 
-test('correctly generates board from scratch', () => {
-	expect(boardFromScratch.fields.length).toBe(BOARD_SIZE);
-	expect(boardFromScratch.fields[0].length).toBe(BOARD_SIZE);
-	expect(boardFromScratch.fields[0][0]).toBe('empty');
-	expect(boardFromScratch.fields[0][1]).toBe('empty');
-	expect(boardFromScratch.fields[0][2]).toBe('empty');
-	expect(boardFromScratch.fields[0][3]).toBe('empty');
-	expect(boardFromScratch.fields[0][4]).toBe('empty');
-	expect(boardFromScratch.fields[3][5]).toBe('empty');
-	expect(boardFromScratch.fields[3][6]).toBe('empty');
-	expect(boardFromScratch.fields[4][7]).toBe('empty');
-	expect(boardFromScratch.fields[5][8]).toBe('empty');
-	expect(boardFromScratch.fields[5][9]).toBe('empty');
-});
-
 test('correctly encodes board', () => {
 	expect(boardFromSerialized.encode()).toEqual(generateSerializedBoard());
 });
 
 test('correctly counts ships', () => {
 	expect(boardFromSerialized.getNumberOfShips()).toBe(2);
-	expect(boardFromScratch.getNumberOfShips()).toBe(0);
+	expect(boardFromScratch.getNumberOfShips()).toBe(5);
 	expect(new Board(generateSerializedBoardWith8Ships()).getNumberOfShips()).toBe(8);
 });

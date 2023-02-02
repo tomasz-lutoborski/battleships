@@ -38,4 +38,12 @@ export class Game {
 	getNumberOfOponentsShips() {
 		return this.oponentsBoard.getNumberOfShips();
 	}
+
+	shoot(x: number, y: number, player: boolean) {
+		if (player) {
+			this.oponentsBoard.shoot(x, y);
+		} else {
+			this.playersBoard.shoot(x, y);
+		}
+	}
 }
