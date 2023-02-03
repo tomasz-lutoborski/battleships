@@ -2,6 +2,12 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "firefox",
+      "request": "launch",
+      "name": "Launch firefox",
+      "url": "http://localhost:5173",
+    },
+    {
       "type": "node",
       "request": "launch",
       "name": "Debug Current Test File",

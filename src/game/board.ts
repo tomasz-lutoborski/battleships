@@ -1,18 +1,20 @@
-import type { Field } from '../types';
+import type { Field, Ship } from '../types';
 
 const BOARD_SIZE = 10;
 
 export class Board {
 	fields: Field[][];
+	ships: Ship[];
 
-	constructor(serialized: string[] | undefined = undefined, populated: boolean = true) {
+	constructor(serialized: string | undefined = undefined, populated: boolean = true) {
 		this.fields = [];
 
 		if (serialized) {
+			let serializedArr = serialized.split(',');
 			for (let i = 0; i < BOARD_SIZE; i++) {
 				this.fields.push([]);
 				for (let j = 0; j < BOARD_SIZE; j++) {
-					this.fields[i].push(serialized[i * BOARD_SIZE + j] as Field);
+					this.fields[i].push(serializedArr[i * BOARD_SIZE + j] as Field);
 				}
 			}
 		} else {
@@ -57,6 +59,8 @@ export class Board {
 				}
 			}
 		}
+
+		this.ships = this.getShips();
 	}
 
 	encode() {
@@ -70,8 +74,8 @@ export class Board {
 		return encoded;
 	}
 
-	getNumberOfShips() {
-		const markShip = (shipTracker: number[][], i: number, j: number, count: number) => {
+	getShips() {
+		const markShip = (shipTracker: number[][], i: number, j: number, count: number, ship: Ship) => {
 			if (
 				i < 0 ||
 				i >= BOARD_SIZE ||
@@ -83,12 +87,14 @@ export class Board {
 				return;
 			}
 			shipTracker[i][j] = count;
-			markShip(shipTracker, i - 1, j, count);
-			markShip(shipTracker, i + 1, j, count);
-			markShip(shipTracker, i, j - 1, count);
-			markShip(shipTracker, i, j + 1, count);
+			ship.push([i, j]);
+			markShip(shipTracker, i - 1, j, count, ship);
+			markShip(shipTracker, i + 1, j, count, ship);
+			markShip(shipTracker, i, j - 1, count, ship);
+			markShip(shipTracker, i, j + 1, count, ship);
 		};
 
+		const ships: Ship[] = [];
 		let count = 0;
 		const shipTracker: number[][] = [];
 		for (let i = 0; i < BOARD_SIZE; i++) {
@@ -102,12 +108,14 @@ export class Board {
 			for (let j = 0; j < BOARD_SIZE; j++) {
 				if (this.fields[i][j] === 'ship' && shipTracker[i][j] === 0) {
 					count++;
-					markShip(shipTracker, i, j, count);
+					const ship: Ship = [];
+					markShip(shipTracker, i, j, count, ship);
+					ships.push(ship);
 				}
 			}
 		}
 
-		return count;
+		return ships;
 	}
 
 	isFieldAvailable(
@@ -171,14 +179,20 @@ export class Board {
 		return true;
 	}
 
-	shoot(x: number, y: number) {
-		console.log(this.fields);
+	checkIfShipIsSunk(ship: Ship) {
+		for (let i = 0; i < ship.length; i++) {
+			const [x, y] = ship[i];
+			if (this.fields[x][y] !== 'hit') {
+				return false;
+			}
+		}
+		return true;
+	}
 
+	shoot(x: number, y: number) {
 		if (this.fields[x][y] === 'ship') {
 			this.fields[x][y] = 'hit';
-			return true;
 		}
 		this.fields[x][y] = 'miss';
-		return false;
 	}
 }

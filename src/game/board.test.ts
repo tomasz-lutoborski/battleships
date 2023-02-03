@@ -10,7 +10,7 @@ function generateSerializedBoard() {
 	for (let i = 0; i < Math.pow(BOARD_SIZE, 2); i++) {
 		boardArray.push(fields[i % fields.length]);
 	}
-	return boardArray;
+	return boardArray.join(',');
 }
 
 function generateSerializedBoardWith8Ships() {
@@ -36,7 +36,7 @@ function generateSerializedBoardWith8Ships() {
 	boardArray[68] = 'ship';
 	boardArray[69] = 'ship';
 
-	return boardArray;
+	return boardArray.join(',');
 }
 
 const boardFromSerialized = new Board(generateSerializedBoard());

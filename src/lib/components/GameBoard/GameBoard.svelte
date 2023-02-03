@@ -1,40 +1,33 @@
 <script lang="ts">
-	import { count } from '$lib/stores/GameStore';
-	import { Game } from '../../../game/game';
 	import GameField from './GameField.svelte';
+	import { createBoard } from '$lib/stores/boardStore';
+	import { getSavedGames } from '$lib/utils/localStorage';
 
-	function handleShot(e: CustomEvent<{ id: string; player: boolean }>) {
-		const [i, j] = e.detail.id.split(',').map(Number);
-		game.shoot(i, j, e.detail.player);
-	}
-
-	function increment() {
-		count.update((n) => n + 1);
-	}
-
-	const game = new Game();
-
-	let countValue = 0;
-	count.subscribe((value) => {
-		countValue = value;
-	});
-
-	$: playerFields = game.playersBoard.fields;
-	$: oponentFields = game.oponentsBoard.fields;
+	const playerBoard = createBoard();
+	const oponentBoard = createBoard();
 </script>
 
 <h1>Game board</h1>
 <div class="board">
-	{#each playerFields as row, i}
+	{#each $playerBoard.fields as row, i}
 		<div class="row">
 			{#each row as cell, j}
-				<GameField {cell} on:click={handleShot} id={`${i},${j}`} player={true} />
+				<GameField {cell} id={`${i},${j}`} player={true} on:click={() => playerBoard.shoot(i, j)} />
 			{/each}
 		</div>
 	{/each}
 </div>
 
-<div class="board">
+<div class="saved-games">
+	<h2>Saved games</h2>
+	<ul>
+		{#each getSavedGames() as game}
+			<li>{game}</li>
+		{/each}
+	</ul>
+</div>
+
+<!-- <div class="board">
 	{#each oponentFields as row, i}
 		<div class="row">
 			{#each row as cell, j}
@@ -42,10 +35,7 @@
 			{/each}
 		</div>
 	{/each}
-</div>
-
-<button on:click={increment}>{countValue}</button>
-
+</div> -->
 <style>
 	.row {
 		display: flex;

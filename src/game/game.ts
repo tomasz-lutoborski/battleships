@@ -1,34 +1,32 @@
 import { Board } from './board';
 
 export class Game {
-	index: number;
 	playersBoard: Board;
 	oponentsBoard: Board;
 	playersTurn: boolean;
+	id: string;
+	created: string;
 
-	/**
-	 * Create a game object from the player's cookie, or initialise a new game
-	 */
-	constructor(serialized: string | undefined = undefined) {
-		if (serialized) {
-			const [index, playersBoard, oponentsBoard, playersTurn] = serialized.split('-');
+	constructor(serialized: string | undefined = undefined, id: string | undefined) {
+		if (serialized && id) {
+			const [playersBoard, oponentsBoard, playersTurn] = serialized.split('-');
 
-			this.index = +index;
-			this.playersBoard = new Board(playersBoard.split(','));
-			this.oponentsBoard = new Board(oponentsBoard.split(','));
+			this.playersBoard = new Board(playersBoard);
+			this.oponentsBoard = new Board(oponentsBoard);
 			this.playersTurn = playersTurn === 'true';
+			this.id = id;
+			this.created = new Date().toString();
 		} else {
-			this.index = Math.floor(Math.random() * Date.now());
 			this.playersBoard = new Board();
 			this.oponentsBoard = new Board();
 			this.playersTurn = Math.random() < 0.5;
+			this.id = id || Date.now().toString();
+			this.created = new Date().toString();
 		}
 	}
 
 	toString() {
-		return `${this.index}-${this.playersBoard.encode()}-${this.oponentsBoard.encode()}-${
-			this.playersTurn
-		}`;
+		return `${this.playersBoard.encode()}-${this.oponentsBoard.encode()}-${this.playersTurn}`;
 	}
 
 	getNumberOfPlayersShips() {
